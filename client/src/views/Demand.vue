@@ -20,7 +20,7 @@
           <div class="trend-items">
             <div v-for="item in getForecastsByTrend('increasing').slice(0, 5)" :key="item.id" class="trend-item">
               <span class="item-name">{{ item.item_name }}</span>
-              <span class="item-change">+{{ getChangePercent(item) }}%</span>
+              <span class="item-change">{{ getChangePercent(item) }}%</span>
             </div>
             <div v-if="getForecastsByTrend('increasing').length > 5" class="more-items">
               +{{ getForecastsByTrend('increasing').length - 5 }} {{ t('demand.more') }}
@@ -181,12 +181,12 @@ export default {
 
       // If change is within ±2%, consider it stable and show blue
       if (changePercent <= 2) {
-        return '#3b82f6' // Blue for stable
+        return '#2a78d6' // mirrors --accent (stable)
       }
 
-      if (change > 0) return '#10b981' // Green for increasing
-      if (change < 0) return '#ef4444' // Red for decreasing
-      return '#3b82f6' // Blue for no change
+      if (change > 0) return '#009300' // mirrors --success (increasing)
+      if (change < 0) return '#d03b3b' // mirrors --danger (decreasing)
+      return '#2a78d6' // mirrors --accent (no change)
     }
 
     const translatePeriod = (period) => {
@@ -232,27 +232,27 @@ export default {
 }
 
 .trend-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   transition: all 0.2s ease;
 }
 
 .trend-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 .increasing-card {
-  border-left: 4px solid #10b981;
+  border-left: 4px solid var(--success);
 }
 
 .stable-card {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--accent);
 }
 
 .decreasing-card {
-  border-left: 4px solid #ef4444;
+  border-left: 4px solid var(--danger);
 }
 
 .trend-header {
@@ -261,7 +261,7 @@ export default {
   gap: 1rem;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 .trend-icon {
@@ -277,32 +277,30 @@ export default {
 }
 
 .increasing-card .trend-icon {
-  background: #d1fae5;
-  color: #059669;
+  background: var(--success-bg);
+  color: var(--success-text);
 }
 
 .stable-card .trend-icon {
-  background: #dbeafe;
-  color: #2563eb;
+  background: var(--accent-bg);
+  color: var(--accent-text);
 }
 
 .decreasing-card .trend-icon {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 .trend-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-secondary);
 }
 
 .trend-count {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-top: 0.25rem;
 }
 
@@ -317,18 +315,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  background: #f8fafc;
-  border-radius: 6px;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-sm);
   transition: background 0.2s;
 }
 
 .trend-item:hover {
-  background: #f1f5f9;
+  background: var(--surface-muted);
 }
 
 .item-name {
   font-size: 0.875rem;
-  color: #0f172a;
+  color: var(--text-primary);
   font-weight: 500;
   flex: 1;
   overflow: hidden;
@@ -344,24 +342,24 @@ export default {
 }
 
 .increasing-card .item-change {
-  color: #059669;
+  color: var(--success-text);
 }
 
 .stable-card .item-change {
-  color: #3b82f6;
+  color: var(--accent-text);
 }
 
 .decreasing-card .item-change {
-  color: #dc2626;
+  color: var(--danger-text);
 }
 
 .item-change.neutral {
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .more-items {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-style: italic;
   text-align: center;
   padding: 0.5rem;

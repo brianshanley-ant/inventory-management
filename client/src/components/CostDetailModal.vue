@@ -5,7 +5,7 @@
         <div class="modal-container" @click.stop>
           <div class="modal-header">
             <h3 class="modal-title">{{ costData.month }} Cost Breakdown</h3>
-            <button class="close-button" @click="close">
+            <button class="btn btn-ghost" @click="close">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
@@ -87,7 +87,7 @@
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="close">Close</button>
+            <button class="btn btn-secondary" @click="close">Close</button>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@ const close = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(11, 11, 11, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,9 +165,10 @@ const close = () => {
 }
 
 .modal-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
@@ -181,32 +182,14 @@ const close = () => {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-title {
+  font-family: var(--font-display);
+  font-weight: 500;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.close-button:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .modal-body {
@@ -225,23 +208,23 @@ const close = () => {
   text-align: center;
 }
 
+/* Hero total: flat brand tint, no gradient */
 .summary-card.total {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
+  background: var(--brand-bg);
+  color: var(--text-primary);
 }
 
 .summary-label {
   font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
+  font-weight: 500;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .summary-value {
   font-size: 2.25rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .cost-breakdown {
@@ -253,27 +236,28 @@ const close = () => {
 .cost-item {
   padding: 1.25rem;
   border-radius: 10px;
-  border: 2px solid;
+  border: 1px solid;
 }
 
 .cost-item.procurement {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
 }
 
+/* Purple hue dropped per style guide: neutral surface instead of indigo tint */
 .cost-item.operational {
-  border-color: #c4b5fd;
-  background: #f5f3ff;
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
 }
 
 .cost-item.labor {
-  border-color: #86efac;
-  background: #f0fdf4;
+  border-color: var(--success-border);
+  background: var(--success-bg);
 }
 
 .cost-item.overhead {
-  border-color: #fcd34d;
-  background: #fffbeb;
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
 }
 
 .cost-header {
@@ -294,23 +278,24 @@ const close = () => {
 }
 
 .cost-item.procurement .cost-icon {
-  background: #3b82f6;
-  color: white;
+  background: var(--accent);
+  color: var(--text-on-fill);
 }
 
+/* Purple hue dropped per style guide: neutral fill instead of indigo */
 .cost-item.operational .cost-icon {
-  background: #8b5cf6;
-  color: white;
+  background: var(--gray-600);
+  color: var(--text-on-fill);
 }
 
 .cost-item.labor .cost-icon {
-  background: #10b981;
-  color: white;
+  background: var(--success);
+  color: var(--text-on-fill);
 }
 
 .cost-item.overhead .cost-icon {
-  background: #f59e0b;
-  color: white;
+  background: var(--warning);
+  color: var(--text-on-fill);
 }
 
 .cost-info {
@@ -319,7 +304,7 @@ const close = () => {
 
 .cost-name {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-primary);
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
@@ -327,38 +312,21 @@ const close = () => {
 .cost-amount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .cost-percentage {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
-}
-
-.btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #334155;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: inherit;
-}
-
-.btn-secondary:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
 }
 
 /* Modal transition animations */

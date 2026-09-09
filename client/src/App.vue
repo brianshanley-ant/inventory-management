@@ -165,6 +165,59 @@ export default {
 </script>
 
 <style>
+:root {
+  /* Warm neutral ramp */
+  --gray-0: #ffffff;  --gray-10: #fcfcfb; --gray-20: #f9f9f7; --gray-40: #f3f3f0;
+  --gray-60: #edece8; --gray-100: #e1e0d9; --gray-150: #d2d1c7; --gray-200: #c3c2b7;
+  --gray-300: #a5a49a; --gray-400: #898781; --gray-500: #6d6b67; --gray-600: #52514e;
+  --gray-700: #383835; --gray-800: #20201f; --gray-900: #0b0b0b;
+
+  /* Surfaces */
+  --page-bg: var(--gray-20);
+  --surface: var(--gray-0);          /* cards, tables, modals, inputs */
+  --surface-subtle: var(--gray-10);  /* table hover, secondary panels */
+  --surface-muted: var(--gray-40);   /* nav hover, chips, progress track */
+
+  /* Text */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-400);
+  --text-on-fill: var(--gray-0);
+
+  /* Borders (alpha so they sit on any surface) */
+  --border: rgba(11, 11, 11, 0.10);
+  --border-strong: rgba(11, 11, 11, 0.18);
+
+  /* Brand (clay) — primary buttons, active nav, selected states, primary chart series */
+  --brand: #d97757;
+  --brand-emphasized: #c6613f;  /* default fill; --brand is hover */
+  --brand-bg: #f7d8cb;
+  --brand-border: #f09978;
+
+  /* Accent (blue) — INFORMATIONAL only: "info" badges, stable trend, links */
+  --accent: #2a78d6;
+  --accent-text: #184f95;
+  --accent-bg: #cde2fb;
+  --accent-border: #86b6ef;
+
+  /* Status */
+  --success: #009300;  --success-text: #006300; --success-bg: #caeac7; --success-border: #73cb6d;
+  --warning: #fab219;  --warning-text: #734500; --warning-bg: #f9dca4; --warning-border: #eda100;
+  --danger:  #d03b3b;  --danger-text:  #8e2626; --danger-bg:  #fad6d6; --danger-border:  #f09595;
+
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Shape + elevation */
+  --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px 0 rgba(11,11,11,0.06), 0 2px 8px 0 rgba(11,11,11,0.04);
+  --shadow-md: 0 2px 4px 0 rgba(11,11,11,0.07), 0 6px 16px 0 rgba(11,11,11,0.06);
+  --shadow-lg: 0 4px 8px 0 rgba(11,11,11,0.08), 0 12px 28px -2px rgba(11,11,11,0.10);
+  --focus-ring: 0 0 0 1px var(--surface), 0 0 0 3px var(--brand-border);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -172,9 +225,11 @@ export default {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
+  font-family: var(--font-sans);
+  background: var(--page-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -186,9 +241,9 @@ body {
 }
 
 .top-nav {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -200,7 +255,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0 2rem;
-  height: 70px;
+  height: 60px;
 }
 
 .nav-container > .nav-tabs {
@@ -212,6 +267,14 @@ body {
   margin-right: 1rem;
 }
 
+/* The header holds a logo, seven tabs, a language switcher and a profile menu; below ~1500px
+   the subtitle is the first thing to give way so nothing wraps onto a second line. */
+@media (max-width: 1500px) {
+  .subtitle {
+    display: none;
+  }
+}
+
 .logo {
   display: flex;
   align-items: baseline;
@@ -219,18 +282,19 @@ body {
 }
 
 .logo h1 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .subtitle {
-  font-size: 0.813rem;
-  color: #64748b;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
   font-weight: 400;
-  padding-left: 0.75rem;
-  border-left: 1px solid #e2e8f0;
 }
 
 .nav-tabs {
@@ -239,34 +303,35 @@ body {
 }
 
 .nav-tabs a {
-  padding: 0.625rem 1.25rem;
-  color: #64748b;
+  white-space: nowrap;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.938rem;
-  border-radius: 6px;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
   transition: all 0.2s ease;
   position: relative;
 }
 
 .nav-tabs a:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+  color: var(--text-primary);
+  background: var(--surface-muted);
 }
 
 .nav-tabs a.active {
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--text-primary);
+  background: transparent;
 }
 
 .nav-tabs a.active::after {
   content: '';
   position: absolute;
   bottom: -1px;
-  left: 0;
-  right: 0;
+  left: 0.75rem;
+  right: 0.75rem;
   height: 2px;
-  background: #2563eb;
+  background: var(--brand-emphasized);
 }
 
 .main-content {
@@ -282,16 +347,18 @@ body {
 }
 
 .page-header h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
   margin-bottom: 0.375rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .page-header p {
-  color: #64748b;
-  font-size: 0.938rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
 }
 
 .stats-grid {
@@ -302,55 +369,55 @@ body {
 }
 
 .stat-card {
-  background: white;
-  padding: 1.25rem;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
+  background: var(--surface);
+  padding: 1.25rem 1.375rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-label {
-  color: #64748b;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.625rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 .stat-value {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-card.warning .stat-value {
-  color: #ea580c;
+  color: var(--warning-text);
 }
 
 .stat-card.success .stat-value {
-  color: #059669;
+  color: var(--success-text);
 }
 
 .stat-card.danger .stat-value {
-  color: #dc2626;
+  color: var(--danger-text);
 }
 
 .stat-card.info .stat-value {
-  color: #2563eb;
+  color: var(--accent-text);
 }
 
 .card {
-  background: white;
-  border-radius: 10px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   padding: 1.25rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 1.25rem;
 }
 
@@ -360,14 +427,14 @@ body {
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.875rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .card-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .table-container {
@@ -380,26 +447,30 @@ table {
 }
 
 thead {
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  background: transparent;
+  border-top: none;
+  border-bottom: 1px solid var(--border);
 }
 
 th {
   text-align: left;
-  padding: 0.5rem 0.75rem;
-  font-weight: 600;
-  color: #475569;
+  padding: 0.625rem 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 td {
-  padding: 0.5rem 0.75rem;
-  border-top: 1px solid #f1f5f9;
-  color: #334155;
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-primary);
   font-size: 0.875rem;
+}
+
+td.numeric,
+th.numeric {
+  font-variant-numeric: tabular-nums;
 }
 
 tbody tr {
@@ -407,83 +478,159 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #f8fafc;
+  background: var(--surface-subtle);
 }
 
 .badge {
   display: inline-block;
-  padding: 0.313rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--radius-pill);
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
+  font-weight: 500;
+  letter-spacing: 0;
+  border: 1px solid transparent;
 }
 
-.badge.success {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge.warning {
-  background: #fed7aa;
-  color: #92400e;
-}
-
-.badge.danger {
-  background: #fecaca;
-  color: #991b1b;
-}
-
-.badge.info {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
+.badge.success,
 .badge.increasing {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: var(--success-border);
 }
 
-.badge.decreasing {
-  background: #fecaca;
-  color: #991b1b;
-}
-
-.badge.stable {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.badge.high {
-  background: #fecaca;
-  color: #991b1b;
-}
-
+.badge.warning,
 .badge.medium {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-color: var(--warning-border);
 }
 
-.badge.low {
-  background: #dbeafe;
-  color: #1e40af;
+.badge.danger,
+.badge.decreasing,
+.badge.high {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: var(--danger-border);
+}
+
+.badge.info,
+.badge.low,
+.badge.stable {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border-color: var(--accent-border);
+}
+
+.badge.neutral {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  border-color: var(--border);
 }
 
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.938rem;
 }
 
 .error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   margin: 1rem 0;
   font-size: 0.938rem;
+}
+
+/* Global button classes shared by views and modals */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.btn-primary {
+  background: var(--brand-emphasized);
+  color: var(--text-on-fill);
+}
+
+.btn-primary:hover {
+  background: var(--brand);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Global form controls */
+select,
+input[type="text"],
+input[type="number"],
+textarea {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0.4rem 0.625rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+select:hover,
+input[type="text"]:hover,
+input[type="number"]:hover,
+textarea:hover {
+  border-color: var(--gray-300);
+}
+
+select:focus-visible,
+input[type="text"]:focus-visible,
+input[type="number"]:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-color: var(--brand-border);
+}
+
+input[type="range"],
+input[type="checkbox"] {
+  accent-color: var(--brand-emphasized);
 }
 </style>

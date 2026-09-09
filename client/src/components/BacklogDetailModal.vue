@@ -5,7 +5,7 @@
         <div class="modal-container" @click.stop>
           <div class="modal-header">
             <h3 class="modal-title">Inventory Shortage Details</h3>
-            <button class="close-button" @click="close">
+            <button class="btn btn-ghost" @click="close">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
@@ -76,7 +76,7 @@
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="close">Close</button>
+            <button class="btn btn-secondary" @click="close">Close</button>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ const formatDate = (dateString) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(11, 11, 11, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,9 +139,10 @@ const formatDate = (dateString) => {
 }
 
 .modal-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
   max-width: 700px;
   width: 100%;
   max-height: 90vh;
@@ -155,32 +156,14 @@ const formatDate = (dateString) => {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-title {
+  font-family: var(--font-display);
+  font-weight: 500;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.close-button:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .modal-body {
@@ -194,19 +177,20 @@ const formatDate = (dateString) => {
   align-items: center;
   gap: 1.25rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
   margin-bottom: 1.5rem;
 }
 
+/* Status strip: shortage icon signals a danger state, flat fill (no gradient) */
 .shortage-icon {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: var(--danger-bg);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--danger-text);
   flex-shrink: 0;
 }
 
@@ -218,39 +202,41 @@ const formatDate = (dateString) => {
 .item-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .item-sku {
   font-size: 0.875rem;
-  color: #64748b;
-  font-family: 'Monaco', 'Courier New', monospace;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
 }
 
 .priority-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
   font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
+  font-weight: 500;
+  border: 1px solid transparent;
   flex-shrink: 0;
 }
 
 .priority-badge.high {
-  background: #fecaca;
-  color: #991b1b;
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: var(--danger-border);
 }
 
 .priority-badge.medium {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-color: var(--warning-border);
 }
 
 .priority-badge.low {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border-color: var(--accent-border);
 }
 
 .shortage-summary {
@@ -263,40 +249,39 @@ const formatDate = (dateString) => {
 .summary-card {
   padding: 1.25rem;
   border-radius: 10px;
-  border: 2px solid;
+  border: 1px solid;
 }
 
 .summary-card.danger {
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
 }
 
 .summary-card.warning {
-  border-color: #fed7aa;
-  background: #fffbeb;
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
 }
 
 .summary-label {
   font-size: 0.813rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
+  font-weight: 500;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .summary-value {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .summary-card.danger .summary-value {
-  color: #dc2626;
+  color: var(--danger-text);
 }
 
 .summary-card.warning .summary-value {
-  color: #f59e0b;
+  color: var(--warning-text);
 }
 
 .info-grid {
@@ -312,49 +297,29 @@ const formatDate = (dateString) => {
 }
 
 .info-label {
-  font-size: 0.813rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .info-value {
-  font-size: 0.938rem;
-  color: #0f172a;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .info-value.order-id,
 .info-value.sku {
-  font-family: 'Monaco', 'Courier New', monospace;
-  color: #2563eb;
+  font-family: var(--font-mono);
+  color: var(--brand-emphasized);
 }
 
 .modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-}
-
-.btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #334155;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: inherit;
-}
-
-.btn-secondary:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
 }
 
 /* Modal transition animations */
