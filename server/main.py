@@ -1,8 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from pydantic import BaseModel
 from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
+from restocking import compute_recommendations, build_restock_order
+
+# Submitted restock orders live in memory for the process lifetime (same as all other data).
+# Kept separate from `orders` so existing dashboard/report KPIs are unaffected.
+restock_orders: List[dict] = []
 
 app = FastAPI(title="Factory Inventory Management System")
 
@@ -89,6 +94,8 @@ class DemandForecast(BaseModel):
     forecasted_demand: int
     trend: str
     period: str
+    category: Optional[str] = None
+    unit_cost: Optional[float] = None
 
 class BacklogItem(BaseModel):
     id: str
@@ -119,6 +126,38 @@ class CreatePurchaseOrderRequest(BaseModel):
     unit_cost: float
     expected_delivery_date: str
     notes: Optional[str] = None
+
+class RestockRecommendation(BaseModel):
+    sku: str
+    name: str
+    category: Optional[str] = None
+    current_demand: int
+    forecasted_demand: int
+    gap: int
+    unit_cost: float
+    recommended_quantity: int
+    line_total: float
+    lead_time_days: int
+
+class RestockRecommendationsResponse(BaseModel):
+    budget: float
+    total_cost: float
+    remaining_budget: float
+    recommendations: List[RestockRecommendation]
+    skipped: List[RestockRecommendation]
+
+class RestockOrderItemRequest(BaseModel):
+    sku: str
+    quantity: int
+
+class CreateRestockOrderRequest(BaseModel):
+    budget: float
+    warehouse: str
+    items: List[RestockOrderItemRequest]
+
+class RestockOrder(Order):
+    lead_time_days: int
+    budget: float
 
 # API endpoints
 @app.get("/")
@@ -303,6 +342,32 @@ def get_monthly_trends():
     result = list(months.values())
     result.sort(key=lambda x: x['month'])
     return result
+
+@app.get("/api/restocking/recommendations", response_model=RestockRecommendationsResponse)
+def get_restock_recommendations(budget: float = Query(..., ge=0)):
+    """Recommend forecast items to restock within a budget (largest demand gap first)"""
+    return compute_recommendations(demand_forecasts, budget)
+
+@app.post("/api/restocking/orders", response_model=RestockOrder, status_code=201)
+def create_restock_order(request: CreateRestockOrderRequest):
+    """Submit a restock order. Items are re-priced server-side from the demand forecasts."""
+    try:
+        order = build_restock_order(
+            items=[item.model_dump() for item in request.items],
+            forecasts=demand_forecasts,
+            warehouse=request.warehouse,
+            budget=request.budget,
+            sequence=len(restock_orders) + 1,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    restock_orders.append(order)
+    return order
+
+@app.get("/api/restocking/orders", response_model=List[RestockOrder])
+def get_restock_orders(warehouse: Optional[str] = None):
+    """List submitted restock orders, optionally filtered by destination warehouse"""
+    return apply_filters(restock_orders, warehouse)
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -106,6 +107,7 @@ export default {
     title: 'Orders',
     description: 'View and manage customer orders',
     allOrders: 'All Orders',
+    submittedOrders: 'Submitted Orders',
     totalOrders: 'Total Orders',
     totalRevenue: 'Total Revenue',
     avgOrderValue: 'Avg Order Value',
@@ -125,7 +127,8 @@ export default {
       totalValue: 'Total Value',
       status: 'Status',
       expectedDelivery: 'Expected Delivery',
-      actualDelivery: 'Actual Delivery'
+      actualDelivery: 'Actual Delivery',
+      leadTime: 'Lead Time'
     }
   },
 
@@ -204,6 +207,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'
@@ -312,6 +316,40 @@ export default {
   },
 
   // Common
+  restocking: {
+    title: 'Restocking',
+    description: 'Plan restock orders from the demand forecast within your budget',
+    budget: 'Budget',
+    destinationWarehouse: 'Destination Warehouse',
+    plannedSpend: 'Planned Spend',
+    remainingBudget: 'Remaining Budget',
+    recommendedItems: 'Recommended Items',
+    skippedItems: 'Skipped Items',
+    skippedHint: 'Full demand gap does not fit in the remaining budget',
+    overBudget: 'Over budget',
+    noRecommendations: 'No items to restock at this budget',
+    placeOrder: 'Place Order',
+    placing: 'Placing...',
+    orderPlaced: 'Order {orderNumber} submitted. Expected delivery {date} ({days} days).',
+    viewOrders: 'View in Orders',
+    orderFailed: 'Failed to place order',
+    leadTimeDays: '{days} days',
+    total: 'Total',
+    of: 'of',
+    table: {
+      sku: 'SKU',
+      item: 'Item',
+      category: 'Category',
+      currentDemand: 'Current',
+      forecastedDemand: 'Forecast',
+      gap: 'Gap',
+      unitCost: 'Unit Cost',
+      quantity: 'Qty',
+      lineTotal: 'Line Total',
+      leadTime: 'Lead Time'
+    }
+  },
+
   common: {
     loading: 'Loading...',
     error: 'Error',

@@ -15,5 +15,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.2.0"
+  },
+  "overrides": {
+    "esbuild": "0.28.2"
   }
 }

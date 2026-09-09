@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalyst Components Architecture</title>
+<style>
+  :root {
+    --ink: #0f172a; --ink-2: #334155; --muted: #64748b; --line: #e2e8f0;
+    --bg: #f8fafc; --card: #ffffff;
+    --blue: #3b82f6; --blue-soft: #dbeafe; --green: #16a34a; --green-soft: #dcfce7;
+    --amber: #d97706; --amber-soft: #fef3c7; --red: #dc2626; --red-soft: #fee2e2;
+    --violet: #7c3aed; --violet-soft: #ede9fe;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.5; }
+  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 28px 40px; }
+  header h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); font-size: 15px; }
+  .meta { display: flex; gap: 24px; margin-top: 14px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .meta b { color: var(--ink-2); font-weight: 600; }
+  main { max-width: 1180px; margin: 0 auto; padding: 32px 40px 64px; }
+  section { margin-bottom: 44px; }
+  h2 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; font-weight: 600; }
+  h3 { font-size: 16px; margin: 0 0 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+  code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; color: var(--ink-2); }
+  p { margin: 0 0 10px; }
+  ul { margin: 0; padding-left: 18px; }
+  li { margin-bottom: 5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; background: #f8fafc; }
+  tr:last-child td { border-bottom: none; }
+  .scroll { overflow-x: auto; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .pill.get { background: var(--green-soft); color: var(--green); }
+  .pill.post { background: var(--blue-soft); color: #1d4ed8; }
+  .pill.warn { background: var(--amber-soft); color: var(--amber); }
+  .pill.bad { background: var(--red-soft); color: var(--red); }
+  .pill.tag { background: #f1f5f9; color: var(--ink-2); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .kicker { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .note { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 12px 16px; border-radius: 6px; font-size: 13.5px; }
+  /* architecture diagram */
+  .arch { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr; align-items: stretch; gap: 0; }
+  .tier { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .tier .kicker { display: flex; justify-content: space-between; }
+  .tier .port { color: var(--blue); }
+  .box { border: 1px solid var(--line); border-radius: 7px; padding: 9px 11px; margin-bottom: 8px; font-size: 13px; background: #fff; }
+  .box b { display: block; font-size: 13px; }
+  .box span { color: var(--muted); font-size: 12px; }
+  .box.blue { border-color: #bfdbfe; background: #eff6ff; }
+  .box.green { border-color: #bbf7d0; background: #f0fdf4; }
+  .box.violet { border-color: #ddd6fe; background: #f5f3ff; }
+  .arrow { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; text-align: center; flex-direction: column; gap: 4px; }
+  .arrow svg { width: 28px; height: 28px; }
+  /* data flow */
+  .flow { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 6px; }
+  .step { flex: 1 1 0; min-width: 128px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; position: relative; }
+  .step + .step { margin-left: 22px; }
+  .step + .step::before { content: ""; position: absolute; left: -22px; top: 50%; width: 22px; height: 2px; background: #cbd5e1; }
+  .step + .step::after { content: ""; position: absolute; left: -8px; top: calc(50% - 5px); border: 6px solid transparent; border-left-color: #cbd5e1; border-right: 0; }
+  .step .n { width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .step b { display: block; font-size: 13.5px; margin-bottom: 4px; }
+  .step span { color: var(--muted); font-size: 12px; display: block; }
+  .step code { display: inline-block; margin-top: 6px; font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tree { white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); margin: 0; }
+  .tree .c { color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 20px; border-top: 1px solid var(--line); }
+  @media (max-width: 900px) { .arch { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); height: 40px; } .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Catalyst Components — System Architecture</h1>
+  <p>Factory Inventory Management System: a two-tier demo app with a Vue 3 single-page frontend and a FastAPI backend serving in-memory JSON data.</p>
+  <div class="meta">
+    <div><b>Repo</b> brianshanley-ant/inventory-management</div>
+    <div><b>Frontend</b> http://localhost:3000</div>
+    <div><b>Backend</b> http://localhost:8001 (Swagger at /docs)</div>
+    <div><b>Persistence</b> none — data reloads from JSON on restart</div>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <h2>System architecture</h2>
+  <div class="arch">
+    <div class="tier">
+      <div class="kicker"><span>Browser · Vue 3 SPA</span><span class="port">:3000</span></div>
+      <div class="box blue"><b>App.vue</b><span>Shell: top nav, FilterBar, router-view, profile &amp; tasks modals, global styles</span></div>
+      <div class="box"><b>vue-router (history mode)</b><span>/ · /inventory · /orders · /spending · /demand · /restocking · /reports</span></div>
+      <div class="box"><b>7 views</b><span>Dashboard, Inventory, Orders, Spending, Demand, Restocking, Reports (+ Backlog, unrouted)</span></div>
+      <div class="box"><b>9 components</b><span>FilterBar, 5 detail modals, TasksModal, ProfileMenu, LanguageSwitcher</span></div>
+      <div class="box"><b>3 composables (module-level singletons)</b><span>useFilters · useI18n (en/ja, USD/JPY) · useAuth (mock user)</span></div>
+      <div class="box violet"><b>api.js</b><span>Single axios client, hard-coded base URL, maps filters to query params</span></div>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+      HTTP JSON<br>CORS: *
+    </div>
+    <div class="tier">
+      <div class="kicker"><span>API · FastAPI + Uvicorn</span><span class="port">:8001</span></div>
+      <div class="box green"><b>main.py + restocking.py</b><span>Routes, Pydantic models, filter helpers and CORS; restocking logic in its own pure module</span></div>
+      <div class="box"><b>apply_filters()</b><span>warehouse · category · status, case-insensitive, skips "all"</span></div>
+      <div class="box"><b>filter_by_month()</b><span>Substring match on order_date; QUARTER_MAP expands Q1–Q4 2025</span></div>
+      <div class="box"><b>Pydantic response models</b><span>InventoryItem, Order, DemandForecast, BacklogItem, PurchaseOrder</span></div>
+      <div class="box"><b>Aggregations</b><span>dashboard/summary, reports/quarterly, reports/monthly-trends computed per request</span></div>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+      import at<br>startup
+    </div>
+    <div class="tier">
+      <div class="kicker"><span>Data · in-memory</span><span class="port">server/data/</span></div>
+      <div class="box green"><b>mock_data.py</b><span>Loads each JSON file once at import into module-level Python lists</span></div>
+      <div class="box"><b>inventory.json</b><span>32 SKUs · 5 categories · warehouse, qty, reorder point, unit cost</span></div>
+      <div class="box"><b>orders.json</b><span>250 orders across 2025 · status, warehouse, category, dates, total</span></div>
+      <div class="box"><b>demand_forecasts.json · backlog_items.json</b><span>9 forecasts · 4 backlog rows</span></div>
+      <div class="box"><b>spending.json · transactions.json</b><span>Summary + monthly + category rollups · 56 transactions</span></div>
+      <div class="box"><b>purchase_orders.json</b><span>Empty list; used to flag backlog rows</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Tech stack</h2>
+  <div class="grid grid-3">
+    <div class="card">
+      <h3>Frontend</h3>
+      <ul>
+        <li><b>Vue 3</b> with the Composition API (<code>setup()</code>, refs, computed)</li>
+        <li><b>vue-router 4</b>, HTML5 history mode</li>
+        <li><b>Vite 5</b> dev server and build; esbuild for deps</li>
+        <li><b>axios</b> for HTTP</li>
+        <li>Charts are hand-written <b>SVG</b>; layout is CSS Grid; scoped styles per component</li>
+        <li>No state library, no TypeScript, no UI framework</li>
+      </ul>
+      <div class="tags"><span class="pill tag">vue ^3.4</span><span class="pill tag">vue-router ^4.3</span><span class="pill tag">vite ^5.2</span><span class="pill tag">axios ^1.6</span></div>
+    </div>
+    <div class="card">
+      <h3>Backend</h3>
+      <ul>
+        <li><b>Python ≥ 3.11</b>, managed with <b>uv</b></li>
+        <li><b>FastAPI</b> on <b>Uvicorn</b>, auto-generated OpenAPI docs</li>
+        <li><b>Pydantic v2</b> models for response validation</li>
+        <li>Plain list comprehensions for filtering; no ORM, no database</li>
+        <li>CORS wide open for local development</li>
+      </ul>
+      <div class="tags"><span class="pill tag">fastapi ≥0.110</span><span class="pill tag">uvicorn ≥0.24</span><span class="pill tag">pydantic ≥2.5</span></div>
+    </div>
+    <div class="card">
+      <h3>Tooling &amp; tests</h3>
+      <ul>
+        <li><b>pytest</b> + FastAPI <code>TestClient</code> in <code>tests/backend/</code> (inventory, dashboard, misc endpoints)</li>
+        <li><code>scripts/start.sh</code> / <code>stop.sh</code> launch both servers with logs in <code>/tmp</code></li>
+        <li>Claude Code config: agents (vue-expert, code-reviewer, security-auditor), a backend-api-test skill, slash commands, a tool-usage logging hook</li>
+        <li>MCP servers declared for Playwright and GitHub</li>
+        <li>No frontend tests, no linter, no CI</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Request data flow</h2>
+  <p style="color:var(--muted);font-size:13.5px;margin-bottom:14px">Example: the user changes a filter on the Overview page.</p>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><b>FilterBar</b><span>User picks Time Period, Location, Category or Status. Writes to shared refs.</span><code>useFilters()</code></div>
+    <div class="step"><div class="n">2</div><b>View watcher</b><span>Each view watches the filter refs and re-runs its load function.</span><code>getCurrentFilters()</code></div>
+    <div class="step"><div class="n">3</div><b>api.js</b><span>Drops "all" values, builds query string, calls axios.</span><code>?warehouse=…</code></div>
+    <div class="step"><div class="n">4</div><b>FastAPI route</b><span>Optional query params bound to the handler.</span><code>@app.get(...)</code></div>
+    <div class="step"><div class="n">5</div><b>In-memory filter</b><span>apply_filters, then filter_by_month, over module lists.</span><code>[x for x in …]</code></div>
+    <div class="step"><div class="n">6</div><b>Pydantic</b><span>Response validated against the declared model and serialized.</span><code>response_model=</code></div>
+    <div class="step"><div class="n">7</div><b>Reactive refs</b><span>Raw arrays land in refs; KPIs and charts derive via computed.</span><code>computed(() =&gt; …)</code></div>
+  </div>
+  <div class="grid grid-2" style="margin-top:16px">
+    <div class="card">
+      <h3>Where the logic lives</h3>
+      <ul>
+        <li><b>Filtering</b> is server-side for inventory, orders and the summary; views also re-derive client-side (Dashboard fetches raw orders and inventory and computes its own KPIs from them).</li>
+        <li><b>Aggregation</b> is split: <code>/dashboard/summary</code> and <code>/reports/*</code> aggregate in Python, while most charts aggregate in Vue computed properties.</li>
+        <li><b>Time filter</b> only applies to orders. Inventory has no date dimension, so the month filter is ignored there.</li>
+        <li><b>Localization</b> is fully client-side. Switching to Japanese swaps strings, the mock user, and formats currency as JPY. The API always returns USD figures.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>State model</h3>
+      <ul>
+        <li>No store. Shared state is module-level <code>ref()</code>s exported from composables, which makes each composable a singleton across components.</li>
+        <li>Filters and locale persist for the session; locale also persists to <code>localStorage</code>.</li>
+        <li>Backend state is the Python process. Any mutation (none exist today) would vanish on restart.</li>
+        <li>Views own their fetch lifecycle: <code>onMounted</code> load, <code>watch</code> on filters, local loading/error refs.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>API surface</h2>
+  <div class="card scroll" style="padding:0">
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Filters</th><th>Returns</th><th>Consumed by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/inventory</td><td>warehouse, category</td><td>List[InventoryItem]</td><td>Dashboard, Inventory, Demand, Backlog</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/inventory/{id}</td><td>—</td><td>InventoryItem, 404</td><td>—</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/orders</td><td>warehouse, category, status, month</td><td>List[Order]</td><td>Dashboard, Orders, Spending</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/orders/{id}</td><td>—</td><td>Order, 404</td><td>—</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/dashboard/summary</td><td>all four</td><td>inventory value, low stock, pending, backlog count, orders value</td><td>Dashboard</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/demand</td><td>—</td><td>List[DemandForecast]</td><td>Demand</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/backlog</td><td>—</td><td>List[BacklogItem] + has_purchase_order</td><td>Dashboard, Backlog</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/spending/{summary,monthly,categories,transactions}</td><td>—</td><td>Raw JSON from spending.json / transactions.json</td><td>Spending</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/reports/quarterly</td><td>—</td><td>Per-quarter orders, revenue, fulfillment rate</td><td>Reports (direct axios)</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/reports/monthly-trends</td><td>—</td><td>Per-month orders, revenue, delivered count</td><td>Reports (direct axios)</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/restocking/recommendations</td><td>budget (required)</td><td>Greedy budget allocation over demand-forecast gaps, plus skipped items</td><td>Restocking</td></tr>
+        <tr><td><span class="pill post">POST</span></td><td class="mono">/api/restocking/orders</td><td>—</td><td>RestockOrder (201); re-priced server-side, per-category lead time, in-memory</td><td>Restocking</td></tr>
+        <tr><td><span class="pill get">GET</span></td><td class="mono">/api/restocking/orders</td><td>warehouse</td><td>List[RestockOrder]</td><td>Orders (Submitted Orders card)</td></tr>
+        <tr><td><span class="pill bad">missing</span></td><td class="mono">/api/tasks (GET/POST/PATCH/DELETE)</td><td>—</td><td>Declared in api.js, no backend route</td><td>App.vue tasks modal</td></tr>
+        <tr><td><span class="pill bad">missing</span></td><td class="mono">/api/purchase-orders</td><td>—</td><td>Declared in api.js, no backend route</td><td>Backlog detail modal</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Data model</h2>
+  <div class="grid grid-3">
+    <div class="card"><div class="kicker">InventoryItem · 32</div><p class="mono" style="color:var(--ink-2)">id, sku, name, category, warehouse, quantity_on_hand, reorder_point, unit_cost, location, last_updated</p><p style="font-size:13px;color:var(--muted)">Low stock = quantity_on_hand ≤ reorder_point. Categories: Circuit Boards, Sensors, Actuators, Controllers, Power Supplies.</p></div>
+    <div class="card"><div class="kicker">Order · 250</div><p class="mono" style="color:var(--ink-2)">id, order_number, customer, items[], status, warehouse, category, order_date, expected_delivery, actual_delivery, total_value</p><p style="font-size:13px;color:var(--muted)">Status: Delivered, Shipped, Processing, Backordered. Dates are YYYY-MM-DD strings; month filtering is substring-based.</p></div>
+    <div class="card"><div class="kicker">DemandForecast · 9 / BacklogItem · 4</div><p class="mono" style="color:var(--ink-2)">item_sku, current_demand, forecasted_demand, trend, period · order_id, quantity_needed, quantity_available, days_delayed, priority</p><p style="font-size:13px;color:var(--muted)">Backlog rows are joined to purchase_orders.json at request time to set has_purchase_order.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Repository layout</h2>
+  <div class="grid grid-2">
+    <div class="card">
+<pre class="tree">client/
+├── index.html
+├── vite.config.js          <span class="c">port 3000, vue plugin</span>
+└── src/
+    ├── main.js             <span class="c">createApp + router</span>
+    ├── App.vue             <span class="c">shell + global CSS (486 lines)</span>
+    ├── api.js              <span class="c">axios client</span>
+    ├── views/              <span class="c">Dashboard 1271 · Spending 852 · Reports 488 …</span>
+    ├── components/         <span class="c">FilterBar, 6 modals, menus</span>
+    ├── composables/        <span class="c">useFilters, useI18n, useAuth</span>
+    ├── locales/            <span class="c">en.js, ja.js</span>
+    └── utils/currency.js</pre>
+    </div>
+    <div class="card">
+<pre class="tree">server/
+├── main.py                 <span class="c">FastAPI app, models, routes</span>
+├── mock_data.py            <span class="c">JSON → module lists</span>
+├── generate_data.py        <span class="c">regenerates sample data</span>
+├── pyproject.toml          <span class="c">uv project</span>
+└── data/*.json             <span class="c">7 files</span>
+tests/backend/              <span class="c">pytest + TestClient</span>
+scripts/start.sh, stop.sh
+.claude/                    <span class="c">agents, commands, hooks, skills</span>
+CLAUDE.md, client/CLAUDE.md, server/CLAUDE.md</pre>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Observations</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>Strengths</h3>
+      <ul>
+        <li>Very small surface: one backend file, one API client, a handful of views. Easy to read end to end in an hour.</li>
+        <li>Consistent filter contract across client and server (<code>'all'</code> means unfiltered everywhere).</li>
+        <li>Composables give shared state without a store dependency.</li>
+        <li>Pydantic models document the data shape and catch drift between JSON and code.</li>
+        <li>Detailed CLAUDE.md files at root, client, and server explain conventions for agent-assisted work.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Gaps and rough edges</h3>
+      <ul>
+        <li><span class="pill bad">bug</span> Tasks and purchase-order calls in <code>api.js</code> hit routes that don't exist. The tasks modal swallows the error and shows only mock tasks.</li>
+        <li><span class="pill warn">inconsistency</span> <code>Reports.vue</code> calls axios directly with a hard-coded URL instead of going through <code>api.js</code>.</li>
+        <li><span class="pill warn">dead code</span> <code>Backlog.vue</code> exists but has no route; backlog data surfaces only on the Dashboard.</li>
+        <li><span class="pill warn">duplication</span> Dashboard fetches raw orders and inventory and recomputes KPIs the summary endpoint already provides.</li>
+        <li><span class="pill warn">size</span> <code>Dashboard.vue</code> is 1,271 lines and <code>Spending.vue</code> is 852; both mix data loading, chart math and SVG markup.</li>
+        <li><span class="pill warn">hard-coded</span> Quarter map and revenue goals are 2025-specific literals in Python and Vue.</li>
+        <li>No auth, wildcard CORS, no persistence, no pagination. Fine for a demo, not beyond it.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>Generated from a read of the repository at commit 27b0724 · September 2026</footer>
+</body>
+</html>
