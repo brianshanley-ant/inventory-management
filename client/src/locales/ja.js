@@ -6,6 +6,7 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '補充',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -106,6 +107,7 @@ export default {
     title: '注文',
     description: '顧客注文の表示と管理',
     allOrders: 'すべての注文',
+    submittedOrders: '送信済み注文',
     totalOrders: '総注文数',
     totalRevenue: '総収益',
     avgOrderValue: '平均注文額',
@@ -125,7 +127,8 @@ export default {
       totalValue: '合計金額',
       status: 'ステータス',
       expectedDelivery: '予定配達日',
-      actualDelivery: '実際の配達日'
+      actualDelivery: '実際の配達日',
+      leadTime: 'リードタイム'
     }
   },
 
@@ -204,6 +207,7 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    submitted: '送信済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'
@@ -312,6 +316,40 @@ export default {
   },
 
   // Common
+  restocking: {
+    title: '補充',
+    description: '需要予測に基づき予算内で補充注文を計画',
+    budget: '予算',
+    destinationWarehouse: '納入先倉庫',
+    plannedSpend: '予定支出',
+    remainingBudget: '残予算',
+    recommendedItems: '推奨品目',
+    skippedItems: 'スキップされた品目',
+    skippedHint: '需要ギャップ全量が残予算に収まりません',
+    overBudget: '予算超過',
+    noRecommendations: 'この予算で補充できる品目はありません',
+    placeOrder: '注文する',
+    placing: '送信中...',
+    orderPlaced: '注文 {orderNumber} を送信しました。予定配達日 {date}（{days}日）。',
+    viewOrders: '注文を表示',
+    orderFailed: '注文の送信に失敗しました',
+    leadTimeDays: '{days}日',
+    total: '合計',
+    of: '/',
+    table: {
+      sku: 'SKU',
+      item: '品目',
+      category: 'カテゴリ',
+      currentDemand: '現在',
+      forecastedDemand: '予測',
+      gap: 'ギャップ',
+      unitCost: '単価',
+      quantity: '数量',
+      lineTotal: '小計',
+      leadTime: 'リードタイム'
+    }
+  },
+
   common: {
     loading: '読み込み中...',
     error: 'エラー',
@@ -328,6 +366,13 @@ export default {
 
   // Product Names
   productNames: {
+    'Industrial Widget Type A': '産業用ウィジェット タイプA',
+    'Steel Bearing Assembly': 'スチールベアリング組立',
+    'High-Temperature Gasket': '高温ガスケット',
+    'Electric Motor 5HP': '電動モーター 5HP',
+    'Oil Filter Cartridge': 'オイルフィルターカートリッジ',
+    'Pressure Relief Valve': '圧力逃し弁',
+    'Logic Controller Board': 'ロジックコントローラーボード',
     'Single Layer PCB Assembly': '単層PCB組立',
     'Dual Layer PCB Assembly': '二層PCB組立',
     'Multi Layer PCB Assembly': '多層PCB組立',
