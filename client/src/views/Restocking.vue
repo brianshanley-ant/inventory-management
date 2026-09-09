@@ -143,7 +143,7 @@
         </span>
       </div>
       <button
-        class="place-order-btn"
+        class="btn btn-primary place-order-btn"
         :disabled="placing || loading || recommendations.length === 0"
         @click="placeOrder"
       >
@@ -322,17 +322,17 @@ export default {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-  border-radius: 8px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius);
   padding: 1rem;
   margin-bottom: 1.5rem;
   font-size: 0.938rem;
 }
 
 .banner-link {
-  color: #065f46;
+  color: var(--success-text);
   font-weight: 600;
   text-decoration: underline;
   white-space: nowrap;
@@ -354,7 +354,7 @@ export default {
 .budget-amount {
   font-size: 2rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   letter-spacing: -0.025em;
 }
 
@@ -363,23 +363,24 @@ export default {
   appearance: none;
   width: 100%;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--gray-100);
   border-radius: 3px;
   outline: none;
   cursor: pointer;
+  accent-color: var(--brand-emphasized);
 }
 
 /* Vendor pseudo-elements must stay in separate rules: an unrecognized
    selector in a comma list invalidates the whole rule. */
 .range-input::-webkit-slider-runnable-track {
   height: 6px;
-  background: #e2e8f0;
+  background: var(--gray-100);
   border-radius: 3px;
 }
 
 .range-input::-moz-range-track {
   height: 6px;
-  background: #e2e8f0;
+  background: var(--gray-100);
   border-radius: 3px;
 }
 
@@ -390,9 +391,9 @@ export default {
   height: 18px;
   margin-top: -6px;
   border-radius: 50%;
-  background: #3b82f6;
-  border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  background: var(--brand-emphasized);
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 
@@ -400,18 +401,18 @@ export default {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #3b82f6;
-  border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  background: var(--brand-emphasized);
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 
 .range-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  box-shadow: var(--focus-ring);
 }
 
 .range-input:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  box-shadow: var(--focus-ring);
 }
 
 .warehouse-field {
@@ -423,16 +424,16 @@ export default {
 .field-label {
   font-size: 0.813rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .warehouse-select {
   padding: 0.4rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   font-size: 0.813rem;
-  color: #0f172a;
-  background: white;
+  color: var(--text-primary);
+  background: var(--surface);
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 500;
@@ -440,25 +441,25 @@ export default {
 }
 
 .warehouse-select:hover {
-  border-color: #94a3b8;
+  border-color: var(--gray-300);
 }
 
 .warehouse-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--brand-border);
+  box-shadow: var(--focus-ring);
 }
 
 .card-subtitle {
   margin-top: 0.25rem;
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .empty-state {
   padding: 2rem 0;
   text-align: center;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.938rem;
 }
 
@@ -472,6 +473,7 @@ export default {
 
 .row-skipped {
   opacity: 0.55;
+  color: var(--text-muted);
 }
 
 .row-skipped .badge {
@@ -481,8 +483,8 @@ export default {
 .summary-bar {
   position: sticky;
   bottom: 0;
-  background: white;
-  border-top: 1px solid #e2e8f0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -499,36 +501,25 @@ export default {
 
 .summary-total {
   font-size: 0.938rem;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .summary-remaining {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
+/* .btn .btn-primary (global) covers color, background, disabled state; only
+   the size/emphasis overrides specific to this call-to-action stay here. */
 .place-order-btn {
   padding: 0.625rem 1.25rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
   white-space: nowrap;
-  background: #3b82f6;
-  color: white;
 }
 
 .place-order-btn:hover:not(:disabled) {
-  background: #2563eb;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.place-order-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {

@@ -73,7 +73,12 @@ npm install && npm run dev
 - Styles: `client/src/App.vue`
 
 ## Design System
-- Colors: Slate/gray (#0f172a, #64748b, #e2e8f0)
-- Status: green/blue/yellow/red
+- Tokens: all colors, radii, shadows, and fonts are CSS custom properties on `:root` in `client/src/App.vue`. Never add hex literals in component styles; use `var(--…)`. (SVG chart code may mirror a token's hex in JS with a comment naming the token.)
+- Palette: warm neutral ramp (`--gray-0` … `--gray-900`, page bg `#f9f9f7`), single clay brand accent (`--brand-emphasized` `#c6613f`) for primary buttons, active nav, selected states, and primary chart series
+- Blue (`--accent*`) is informational only: info badges, stable trends, links
+- Status: `--success*` green, `--warning*` yellow, `--danger*` red, each with fill / text / bg / border variants
+- Type: system sans for UI (`--font-sans`), serif display face (`--font-display`) for page titles, modal titles, and the logo. No all-caps labels, no letter-spacing tricks
+- Surfaces: hairline `--border`, `--radius-lg` cards with `--shadow-sm`; no gradients
+- Shared classes in App.vue: `.btn` + `.btn-primary` / `.btn-secondary` / `.btn-ghost`, `.badge` (pill) with success / warning / danger / info / neutral variants
 - Charts: Custom SVG, CSS Grid for layouts
 - No emojis in UI
